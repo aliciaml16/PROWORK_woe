@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class WorldManager : MonoBehaviour
 {
+    // This is our game
+
     [Header("ZIG SIM settings")]
     public int oscPortNumber = 3300; // port number
     public string oscDeviceUUID = "aliciaphone"; // UUID
