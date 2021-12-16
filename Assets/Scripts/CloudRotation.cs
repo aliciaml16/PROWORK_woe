@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CloudRotation : MonoBehaviour
 {
+    public float rotationValue = 30;
     // Start is called before the first frame update
     void Start()
     {
@@ -13,6 +14,6 @@ public class CloudRotation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.Rotate(new Vector3(0, -30, 0) * Time.deltaTime);
+        transform.Rotate(new Vector3(0, rotationValue, 0) * Time.deltaTime);
     }
 }
