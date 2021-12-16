@@ -4,6 +4,7 @@ using extOSC;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using UnityEngine.SceneManagement;
 
 public class WorldManager : MonoBehaviour
 {
@@ -47,8 +48,13 @@ public class WorldManager : MonoBehaviour
     private int numberOfQuestions = 0;
     private bool isPossibleQuestion = false;
 
-    [Header("QM - UI")]
+    [Header("QM - Facts")]
+    public GameObject factTitle;
+    public GameObject factText;
+    public GameObject quickTip;
     public GameObject factUI;
+
+    [Header("QM - UI")]
     public GameObject gameOverScreen;
     public GameObject winScreen;
     public GameObject mediumScreen;
@@ -115,6 +121,18 @@ public class WorldManager : MonoBehaviour
         "Did you know that Wind is an emissions-free source of energy and only relies on the wind. Depending on wind conditions, the blades turn at rates between 10 and 20 revolutions per minute"
     };
 
+    [Header("Menu")]
+    public GameObject pauseMenu;
+    public GameObject helpMenu;
+    private bool menuOpen = false;
+    private bool helpOpen = false;
+    private int selectedOption = 0;
+    private int maxButton = 3;
+    public GameObject[] buttonsPause;
+    public GameObject[] buttonsWin;
+    public GameObject[] buttonsLose;
+    public GameObject[] buttonsMedium;
+
     private void Start()
     {
         // We connect the phone with the computer by creating a OSCReceiver
@@ -124,12 +142,10 @@ public class WorldManager : MonoBehaviour
         if (operatingSystem == "ios")
         {
             receiver.Bind("/ZIGSIM/" + oscDeviceUUID + "/gyro", OnMove);
-            //receiver.Bind("/ZIGSIM/" + oscDeviceUUID + "/touchcount", CloseUI);
             receiver.Bind("/ZIGSIM/" + oscDeviceUUID + "/touch0", CloseUI);
         }
         else {
             receiver.Bind("/" + oscDeviceUUID + "/gyro", OnMove);
-            //receiver.Bind("/" + oscDeviceUUID + "/touchcount", CloseUI);
             receiver.Bind("/" + oscDeviceUUID + "/touch0", CloseUI);
         }
 
@@ -149,6 +165,8 @@ public class WorldManager : MonoBehaviour
 
         positionBadBox = new Vector3(-5, 0.7f, 47.7f);
         positionGoodBox = new Vector3(5, 0.7f, 47.7f);
+
+        Time.timeScale = 1;
     }
 
     private void FixedUpdate()
@@ -188,37 +206,171 @@ public class WorldManager : MonoBehaviour
         if (numberOfQuestions == numberOfQuestionsToGet && lifetime > 50)
         {
             winScreen.SetActive(true);
+            Time.timeScale = 0;
+
+            for (int i = 0; i < buttonsWin.Length; i++)
+            {
+                buttonsWin[i].GetComponent<Image>().color = new Color(0.2588235f, 0.3098039f, 0.254902f, 0.2f);
+            }
+            buttonsWin[selectedOption].GetComponent<Image>().color = new Color(0.2588235f, 0.3098039f, 0.254902f, 0.6f);
         }
         else if (lifetime == 0)
         {
             gameOverScreen.SetActive(true);
+            Time.timeScale = 0;
+
+            for (int i = 0; i < buttonsLose.Length; i++)
+            {
+                buttonsLose[i].GetComponent<Image>().color = new Color(0.9686275f, 0.9372549f, 0.8941177f, 0.2f);
+            }
+            buttonsLose[selectedOption].GetComponent<Image>().color = new Color(0.6078432f, 0.654902f, 0.3333333f, 0.4f);
         }
         else if (numberOfQuestions == numberOfQuestionsToGet && lifetime <= 50)
         {
             mediumScreen.SetActive(true);
+            Time.timeScale = 0;
+
+            for (int i = 0; i < buttonsMedium.Length; i++)
+            {
+                buttonsMedium[i].GetComponent<Image>().color = new Color(0.9686275f, 0.9372549f, 0.8941177f, 0.2f);
+            }
+            buttonsMedium[selectedOption].GetComponent<Image>().color = new Color(0.6078432f, 0.654902f, 0.3333333f, 0.4f);
         }
         else {
             timer += Time.deltaTime;
         }
+
+        // Menu
+        if (menuOpen == true)
+        {
+            for (int i = 0; i < buttonsPause.Length; i++)
+            {
+                buttonsPause[i].GetComponent<Image>().color = new Color(0.9686275f, 0.9372549f, 0.8941177f, 0.2f);
+            }
+            buttonsPause[selectedOption].GetComponent<Image>().color = new Color(0.6078432f, 0.654902f, 0.3333333f, 0.4f);
+        }
+
+        print(menuOpen);
     }
 
     public void OnMove(OSCMessage message)
     {
         // We get the values we receive from the phone and assign them to the movement
-        movementX = message.Values[0].FloatValue;
-        movementY = message.Values[1].FloatValue;
+        if (menuOpen == false && numberOfQuestions != numberOfQuestionsToGet) {
+            movementX = message.Values[0].FloatValue;
+            movementY = message.Values[1].FloatValue;
+        } else {
+            if (menuOpen == true) { maxButton = 3; }
+            else { maxButton = 2;}
+            if (message.Values[1].FloatValue < -0.2) {
+                selectedOption += 1;
+                if (selectedOption >= maxButton) {
+                    selectedOption = maxButton;
+                }
+            } else if (message.Values[1].FloatValue > 0.2)
+            {
+                selectedOption -= 1;
+                if (selectedOption <= 0)
+                {
+                    selectedOption = 0;
+                }
+            }
+        }
     }
 
     public void CloseUI(OSCMessage message)
     {
-        float x = message.Values[1].FloatValue;
-        float y = message.Values[0].FloatValue;
+        float x = message.Values[0].FloatValue;
+        float y = message.Values[1].FloatValue;
+
+        // Close tip
         if (factUI.active == true) {
-            if (x > 0.25 && x < 1 && y < -0.2 && y > -1) {
+            if (x < 0 && x > -1 && y > 0 && y < 1) {
                 factUI.SetActive(false);
                 timer = 0.0f;
                 isPossibleQuestion = false;
+
+                numberOfQuestions += 1;
             }
+        }
+
+        // Menu
+        if (menuOpen == false && numberOfQuestions != numberOfQuestionsToGet)
+		{
+			if (x > 0 && x < 1 && y > 0 && y < 1)
+            {
+				menuOpen = true;
+				pauseMenu.SetActive(true);
+                Time.timeScale = 0;
+            }
+	    }
+
+        // Back
+        if (menuOpen == true)
+		{
+			if (x > 0 && x < 1 && y < 0 && y > -1)
+            {
+                if (helpOpen == true)
+                {
+                    helpOpen = false;
+                    helpMenu.SetActive(false);
+                }
+                else {
+                    menuOpen = false;
+                    pauseMenu.SetActive(false);
+                    Time.timeScale = 1;
+                }
+            }
+        }
+
+        // Confirm
+            if (x < 0 && x > -1 && y < 0 && y > -1)
+            {
+                if (menuOpen == true)
+                {
+                    switch (selectedOption)
+                    {
+                        case 0:
+                            // RESUME
+                            menuOpen = false;
+                            pauseMenu.SetActive(false);
+                            Time.timeScale = 1;
+                            break;
+                        case 1:
+                            // HELP
+                            helpOpen = true;
+                            helpMenu.SetActive(true);
+                            break;
+                        case 2:
+                            // MAIN MENU
+                            SceneManager.LoadScene("MainMenu");
+                            break;
+                        case 3:
+                            // EXIT GAME
+                            Application.Quit();
+                            break;
+                    }
+                }
+                else if (numberOfQuestions == numberOfQuestionsToGet)
+                {
+                    print("helo");
+                    switch (selectedOption)
+                    {
+                        case 0:
+                            // PLAY AGAIN
+                            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                            Time.timeScale = 1;
+                            break;
+                        case 1:
+                            // MAIN MENU
+                            SceneManager.LoadScene("MainMenu");
+                            break;
+                        case 2:
+                            // EXIT GAME
+                            Application.Quit();
+                            break;
+                    }
+                }
         }
     }
 
@@ -321,8 +473,6 @@ public class WorldManager : MonoBehaviour
     private void endQuestion()
     {
         questionText.SetActive(false);
-
-        numberOfQuestions += 1;
         timer = 0.0f;
 
         positionBadBox = new Vector3(-5, 0.7f, -7f);
@@ -345,19 +495,66 @@ public class WorldManager : MonoBehaviour
     {
         factUI.SetActive(true);
         factUI.gameObject.transform.GetChild(0).GetComponent<Image>().color = new Color(0.607f, 0.37f, 0.25f);
-        factUI.gameObject.transform.GetChild(1).GetComponent<Text>().text = "NOT THE BEST CHOICE...";
-        factUI.gameObject.transform.GetChild(2).GetComponent<Text>().text = badTip[index];
+        factTitle.GetComponent<Text>().text = "NOT THE BEST CHOICE...";
+        factText.GetComponent<Text>().text = badTip[index];
         badTip.RemoveAt(index);
         goodTip.RemoveAt(index);
+
+        if (numberOfQuestions == 0) {
+            quickTip.SetActive(true);
+        }
+        else {
+            quickTip.SetActive(false);
+        }
     }
 
     private void GoodTip()
     {
         factUI.SetActive(true);
         factUI.gameObject.transform.GetChild(0).GetComponent<Image>().color = new Color(0.607f, 0.65f, 0.33f);
-        factUI.gameObject.transform.GetChild(1).GetComponent<Text>().text = "GOOD CHOICE!";
-        factUI.gameObject.transform.GetChild(2).GetComponent<Text>().text = goodTip[index];
+        factTitle.GetComponent<Text>().text = "GOOD CHOICE!";
+        factText.GetComponent<Text>().text = goodTip[index];
         badTip.RemoveAt(index);
         goodTip.RemoveAt(index);
+
+        if (numberOfQuestions == 0)
+        {
+            quickTip.SetActive(true);
+        }
+        else
+        {
+            quickTip.SetActive(false);
+        }
+    }
+
+    // Menu navigation
+    private void menuNavigation() {
+        if (menuOpen == true)
+        {
+            switch (selectedOption)
+            {
+                case 1:
+                    // RESUME
+                    menuOpen = false;
+                    pauseMenu.SetActive(false);
+                    Time.timeScale = 1;
+                    break;
+                case 2:
+                    // HELP
+                    helpOpen = true;
+                    helpMenu.SetActive(false);
+                    break;
+                case 3:
+                    // MAIN MENU
+                    SceneManager.LoadScene("MainMenu");
+                    break;
+                case 4:
+                    // EXIT GAME
+                    Application.Quit();
+                    break;
+            }
+        } else if (menuOpen == false && numberOfQuestions == numberOfQuestionsToGet) {
+
+        }
     }
 }
