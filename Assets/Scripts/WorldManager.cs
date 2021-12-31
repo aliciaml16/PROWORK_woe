@@ -79,46 +79,46 @@ public class WorldManager : MonoBehaviour
         "Choose between buying new things or second hand ones.",
         "Choose between buying local or at a big supermarket.",
         "Choose between using a LED bulb or a normal one.",
-        "Choose between using oil generated energy or using solar power.",
-        "Choose between using coal energy or wind energy."
+        "Choose between using coal energy or wind energy.",
+        "Choose between using oil generated energy or using solar power."
     };
 
     private List<string> badTip = new List<string>() {
         "Certain meats are worse than others for the environment. Maybe try out a Meatless-Monday for instance?",
-        "Oops, did you know by eating a hamburger with meat, you are using the same amount of water as taking a shower for 2 months. ",
-        "Did you know that sometimes we take the car for short distances and that contributes more to pollution and CO2.",
-        "Is it necessary? Not only could the distance be a short one, but the fuel costs can get expensive. ",
+        "Oops, did you know by eating a hamburger with meat, you are using the same amount of water as taking a shower for 2 months? ",
+        "Did you know that sometimes we take the car for short distances and that contributes more to pollution and CO2?",
+        "Is it necessary? Not only could the distance be a short one, but the fuel costs can get expensive.",
         "Think again. The production of single-use plastic bottles is made out of oil and gas, and only 14% are recyclable.  ",
-        "Did you know that plastic can easily be spread everywhere and end up in the sea. Sea animals might think that the plastic looks like jellyfish and try to eat it, and that could potentially kill them.",
-        "Did you know if you are not sorting your trash correctly, it gets difficult to recycle and decompose everything.",
+        "Did you know that plastic can easily be spread everywhere and end up in the sea? Sea animals might think that the plastic looks like jellyfish and try to eat it, and that could potentially kill them.",
+        "Did you know if you are not sorting your trash correctly, it gets difficult to recycle and decompose everything?",
         "Air travel dominates a frequent traveller’s individual contribution to climate change. Yet aviation overall accounts for only 2.5% of global carbon dioxide (CO2) emissions.",
         "Flights produce greenhouse gases - mainly carbon dioxide (CO2) - from burning fuel. These contribute to global warming when released into the atmosphere.",
         "Emissions from flights stay in the atmosphere and will warm it for several centuries. Because aircraft emissions are released high in the atmosphere, they have a potent climate impact, triggering chemical reactions and atmospheric effects that heat the planet.",
-        "Did you know that always having the lights on is consuming a lot of energy and can get very expensive too.",
+        "Did you know that always having the lights on is consuming a lot of energy and can get very expensive too?",
         "Maybe it's not necessary to buy new things frequently, overconsumption is one of the biggest pollution creators.",
-        "Did you know that some foods can be injected with chemicals in order for them to look good enough.",
-        "Did you know by using the wrong type of light bulb, you are wasting more energy than you might think.",
+        "Did you know that some foods can be injected with chemicals in order for them to look good enough?",
+        "Did you know by using the wrong type of light bulb, you are wasting more energy than you might think?",
         "It’s not just the effect oil has on wildlife; oil contamination can make water unsuitable for irrigation and damage how water treatment plants work.",
-        "Did you know that coal originally comes from oil production but has to be heated up to become coal."
+        "Did you know that coal originally comes from oil production but has to be heated up to become coal?"
     };
 
     private List<string> goodTip = new List<string>() {
         "Fantastic! Did you know that eating more vegetables is not only healthy for you, but it also uses less water than meat?",
         "Not only are you using less water than meat, but it also benefits the wildlife and animals.",
-        "Did you know that taking the bike not only is good for the environment, it can also improve your mood.",
+        "Did you know that taking the bike not only is good for the environment, it can also improve your mood?",
         "Movement is always good for you and it’s free!",
         "Stay hydrated! Glass bottles have a longer life-span then plastic and can be cleaned easier than plastic bottles.",
         "Using paper-, cotton- or recyclable plastic bags can be used multiple times and have different purposes.  ",
-        "Did you know that your food waste could be used for boosting your garden. Give it a try, your flowers will love the nutrition!",
+        "Did you know that your food waste could be used for boosting your garden? Give it a try, your flowers will love the nutrition?",
         "In fact, compared to cars and airplanes, trains emit between 66 and 75 percent less carbon. In terms of energy consumption, use of space, and noise levels, trains are far more sustainable too.",
         "Public transportation inherently benefits the environment because it reduces the number of people driving single occupancy vehicles.",
         "Sailboats aren't as damaging on the environment as boats that exclusively rely on a motor. And it’s a nice way to explore the sea.",
-        "Did you know that turning off the lights saves up some energy that can be used for another time.",
-        "Did you know by buying second hand or fixing something old, you are giving it a new life.",
-        "Did you know that shopping locally not only helps local farmers, but it also reduces your carbon footprint.",
-        "Did you know that it's 80% more positive to use LED bulbs and they require less energy.",
-        "Did you know, even when it’s cloudy, the solar power can still produce energy!",
-        "Did you know that Wind is an emissions-free source of energy and only relies on the wind. Depending on wind conditions, the blades turn at rates between 10 and 20 revolutions per minute"
+        "Did you know that turning off the lights saves up some energy that can be used for another time?",
+        "Did you know by buying second hand or fixing something old, you are giving it a new life?",
+        "Did you know that shopping locally not only helps local farmers, but it also reduces your carbon footprint?",
+        "Did you know that it's 80% more positive to use LED bulbs and they require less energy?",
+        "Did you know, even when it’s cloudy, the solar power can still produce energy?",
+        "Did you know that wind is an emissions-free source of energy and only relies on the wind? Depending on wind conditions, the blades turn at rates between 10 and 20 revolutions per minute"
     };
 
     [Header("Menu")]
@@ -132,6 +132,22 @@ public class WorldManager : MonoBehaviour
     public GameObject[] buttonsWin;
     public GameObject[] buttonsLose;
     public GameObject[] buttonsMedium;
+
+    // audio
+
+    public AudioSource backgroundMusic;
+    public AudioClip correctAnswer;
+    public AudioClip wrongAnswer;
+    public AudioClip winGame;
+    public AudioClip loseGame;
+    public AudioClip pollutionHit;
+    public AudioClip buttonScroll;
+    public AudioClip buttonSelected;
+    public AudioClip buttonBack;
+    public AudioClip buttonClose;
+
+    private AudioSource audioSource;
+    private bool isSoundPlayed = false;
 
     private void Start()
     {
@@ -167,6 +183,10 @@ public class WorldManager : MonoBehaviour
         positionGoodBox = new Vector3(5, 0.7f, 47.7f);
 
         Time.timeScale = 1;
+
+        // get audio
+
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void FixedUpdate()
@@ -182,7 +202,9 @@ public class WorldManager : MonoBehaviour
     void Update()
     {
         // Changing size of the lifetime bar
-        lifetimeBar.transform.localScale = new Vector3((lifetime * initialBarWidth) / 100, 0.1561234f, 0);
+        float length = (lifetime * initialBarWidth) / 100;
+        if (length < 0) { length = 0; }
+        lifetimeBar.transform.localScale = new Vector3(length, 0.1561234f, 0);
 
         // Change the colors depending on the life
         lifetimeBar.color = greenGradient.Evaluate(lifetime / 100);
@@ -207,34 +229,81 @@ public class WorldManager : MonoBehaviour
         {
             winScreen.SetActive(true);
             Time.timeScale = 0;
+            if(isSoundPlayed == false)
+            {
+                audioSource.PlayOneShot(winGame);
+                isSoundPlayed = true;
+            }
+            
+            backgroundMusic.Stop();
 
             for (int i = 0; i < buttonsWin.Length; i++)
             {
                 buttonsWin[i].GetComponent<Image>().color = new Color(0.2588235f, 0.3098039f, 0.254902f, 0.2f);
             }
-            buttonsWin[selectedOption].GetComponent<Image>().color = new Color(0.2588235f, 0.3098039f, 0.254902f, 0.6f);
-        }
-        else if (lifetime == 0)
-        {
-            gameOverScreen.SetActive(true);
-            Time.timeScale = 0;
+            // last button has a different color
+            buttonsWin[buttonsWin.Length - 1].GetComponent<Image>().color = new Color(0.60784313f, 0.36862745f, 0.24705882f, 0.35f);
 
-            for (int i = 0; i < buttonsLose.Length; i++)
+            // selected button color
+            if (selectedOption == maxButton)
             {
-                buttonsLose[i].GetComponent<Image>().color = new Color(0.9686275f, 0.9372549f, 0.8941177f, 0.2f);
+                // last button (exit) has different select color
+                buttonsWin[selectedOption].GetComponent<Image>().color = new Color(0.60784313f, 0.36862745f, 0.24705882f, 0.7f);
             }
-            buttonsLose[selectedOption].GetComponent<Image>().color = new Color(0.6078432f, 0.654902f, 0.3333333f, 0.4f);
+            else
+            {
+                buttonsWin[selectedOption].GetComponent<Image>().color = new Color(0.2588235f, 0.3098039f, 0.254902f, 0.7f);
+            }
         }
         else if (numberOfQuestions == numberOfQuestionsToGet && lifetime <= 50)
         {
             mediumScreen.SetActive(true);
             Time.timeScale = 0;
 
+            if (isSoundPlayed == false)
+            {
+                audioSource.PlayOneShot(winGame);
+                isSoundPlayed = true;
+            }
+
+            backgroundMusic.Stop();
+
             for (int i = 0; i < buttonsMedium.Length; i++)
             {
                 buttonsMedium[i].GetComponent<Image>().color = new Color(0.9686275f, 0.9372549f, 0.8941177f, 0.2f);
             }
-            buttonsMedium[selectedOption].GetComponent<Image>().color = new Color(0.6078432f, 0.654902f, 0.3333333f, 0.4f);
+            // last button has a different color
+            buttonsMedium[buttonsMedium.Length - 1].GetComponent<Image>().color = new Color(0.811764705f, 0.615686274f, 0.36862745f, 0.4f);
+
+            // selected button color
+            if (selectedOption == maxButton)
+            {
+                // last button (exit) has different select color
+                buttonsMedium[selectedOption].GetComponent<Image>().color = new Color(0.811764705f, 0.615686274f, 0.36862745f, 0.7f);
+            }
+            else
+            {
+                buttonsMedium[selectedOption].GetComponent<Image>().color = new Color(0.9686275f, 0.9372549f, 0.8941177f, 0.4f);
+            }
+        }
+        else if (lifetime <= 0)
+        {
+            gameOverScreen.SetActive(true);
+            Time.timeScale = 0;
+
+            if (isSoundPlayed == false)
+            {
+                audioSource.PlayOneShot(loseGame);
+                isSoundPlayed = true;
+            }
+
+            backgroundMusic.Stop();
+
+            for (int i = 0; i < buttonsLose.Length; i++)
+            {
+                buttonsLose[i].GetComponent<Image>().color = new Color(0.9686275f, 0.9372549f, 0.8941177f, 0.2f);
+            }
+            buttonsLose[selectedOption].GetComponent<Image>().color = new Color(0.6078432f, 0.654902f, 0.3333333f, 0.4f);
         }
         else {
             timer += Time.deltaTime;
@@ -243,14 +312,27 @@ public class WorldManager : MonoBehaviour
         // Menu
         if (menuOpen == true)
         {
-            for (int i = 0; i < buttonsPause.Length; i++)
+            // not selected buttons color
+            for (int i = 0; i < buttonsPause.Length - 1; i++)
             {
                 buttonsPause[i].GetComponent<Image>().color = new Color(0.9686275f, 0.9372549f, 0.8941177f, 0.2f);
             }
-            buttonsPause[selectedOption].GetComponent<Image>().color = new Color(0.6078432f, 0.654902f, 0.3333333f, 0.4f);
+            // last button has a different color
+            buttonsPause[buttonsPause.Length-1].GetComponent<Image>().color = new Color(0.8117647058f, 0.6156862745f, 0.36862745098f, 0.2f);
+
+            // selected button color
+            if (selectedOption == maxButton)
+            {
+                // last button (exit) has different select color
+                buttonsPause[selectedOption].GetComponent<Image>().color = new Color(0.8117647058f, 0.6156862745f, 0.36862745098f, 0.4f);
+            }
+            else
+            {
+                buttonsPause[selectedOption].GetComponent<Image>().color = new Color(0.6078432f, 0.654902f, 0.3333333f, 0.4f);
+            }
         }
 
-        print(menuOpen);
+//        print(menuOpen);
     }
 
     public void OnMove(OSCMessage message)
@@ -260,35 +342,65 @@ public class WorldManager : MonoBehaviour
             movementX = message.Values[0].FloatValue;
             movementY = message.Values[1].FloatValue;
         } else {
-            if (menuOpen == true) { maxButton = 3; }
-            else { maxButton = 2;}
+            if (menuOpen == true)
+            { 
+                maxButton = 3;
+            }
+            else { 
+                maxButton = 2;
+            }
+
             if (message.Values[1].FloatValue < -0.2) {
                 selectedOption += 1;
-                if (selectedOption >= maxButton) {
+                if (selectedOption > maxButton) {
                     selectedOption = maxButton;
                 }
+
+                else
+                {
+                    audioSource.PlayOneShot(buttonScroll);
+                }
+
             } else if (message.Values[1].FloatValue > 0.2)
             {
                 selectedOption -= 1;
-                if (selectedOption <= 0)
+                if (selectedOption < 0)
                 {
                     selectedOption = 0;
                 }
+
+                else
+                {
+                    audioSource.PlayOneShot(buttonScroll);
+                }
+
             }
         }
     }
 
     public void CloseUI(OSCMessage message)
     {
-        float x = message.Values[0].FloatValue;
-        float y = message.Values[1].FloatValue;
+        double x = 0;
+        double y = 0;
+        if (operatingSystem == "ios")
+        {
+            x = message.Values[0].FloatValue;
+            y = message.Values[1].FloatValue;
+        }
+        else
+        {
+            x = message.Values[0].DoubleValue;
+            y = message.Values[1].DoubleValue;
+        }
 
-        // Close tip
-        if (factUI.active == true) {
+        // Close fact
+        if (factUI.activeInHierarchy == true) {
             if (x < 0 && x > -1 && y > 0 && y < 1) {
                 factUI.SetActive(false);
                 timer = 0.0f;
                 isPossibleQuestion = false;
+
+                audioSource.PlayOneShot(buttonClose);
 
                 numberOfQuestions += 1;
             }
@@ -302,13 +414,16 @@ public class WorldManager : MonoBehaviour
 				menuOpen = true;
 				pauseMenu.SetActive(true);
                 Time.timeScale = 0;
+                audioSource.PlayOneShot(buttonSelected);
             }
 	    }
 
         // Back
         if (menuOpen == true)
 		{
-			if (x > 0 && x < 1 && y < 0 && y > -1)
+            audioSource.PlayOneShot(buttonBack);
+
+            if (x > 0 && x < 1 && y < 0 && y > -1)
             {
                 if (helpOpen == true)
                 {
@@ -324,53 +439,56 @@ public class WorldManager : MonoBehaviour
         }
 
         // Confirm
-            if (x < 0 && x > -1 && y < 0 && y > -1)
+        if (x < 0 && x > -1 && y < 0 && y > -1)
+        {
+            if (menuOpen == true)
             {
-                if (menuOpen == true)
+            audioSource.PlayOneShot(buttonSelected);
+            switch (selectedOption)
                 {
-                    switch (selectedOption)
-                    {
-                        case 0:
-                            // RESUME
-                            menuOpen = false;
-                            pauseMenu.SetActive(false);
-                            Time.timeScale = 1;
-                            break;
-                        case 1:
-                            // HELP
-                            helpOpen = true;
-                            helpMenu.SetActive(true);
-                            break;
-                        case 2:
-                            // MAIN MENU
-                            SceneManager.LoadScene("MainMenu");
-                            break;
-                        case 3:
-                            // EXIT GAME
-                            Application.Quit();
-                            break;
-                    }
+                    case 0:
+                        // RESUME
+                        menuOpen = false;
+                        pauseMenu.SetActive(false);
+                        Time.timeScale = 1;
+                        break;
+                    case 1:
+                        // HELP
+                        helpOpen = true;
+                        helpMenu.SetActive(true);
+                        break;
+                    case 2:
+                        // MAIN MENU
+                        SceneManager.LoadScene("MainMenu");
+                        break;
+                    case 3:
+                        // EXIT GAME
+                        Application.Quit();
+                        break;
                 }
-                else if (numberOfQuestions == numberOfQuestionsToGet)
+            }
+            else if (numberOfQuestions == numberOfQuestionsToGet)
+            {
+                audioSource.PlayOneShot(buttonSelected);
+                switch (selectedOption)
                 {
-                    print("helo");
-                    switch (selectedOption)
-                    {
-                        case 0:
-                            // PLAY AGAIN
-                            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-                            Time.timeScale = 1;
-                            break;
-                        case 1:
-                            // MAIN MENU
-                            SceneManager.LoadScene("MainMenu");
-                            break;
-                        case 2:
-                            // EXIT GAME
-                            Application.Quit();
-                            break;
-                    }
+                    case 0:
+                        // PLAY AGAIN
+                        // Dirty fix for select sound not playing
+                        SceneManager.LoadScene("MainMenu");
+                        SceneManager.LoadScene("GameScreen");
+                        Time.timeScale = 1;
+                        break;
+                    case 1:
+                        // MAIN MENU
+                        SceneManager.LoadScene("MainMenu");
+                        break;
+                    case 2:
+                        // EXIT GAME
+                        Application.Quit();
+                        break;
                 }
+            }
         }
     }
 
@@ -387,8 +505,9 @@ public class WorldManager : MonoBehaviour
         {
             lifetime += 5; // we add 5 point to the lifetime
             endQuestion();
+            audioSource.PlayOneShot(correctAnswer);
             other.transform.parent.gameObject.SetActive(false);
-
+            
             if (lifetime > 100)
             {
                 lifetime = 100;
@@ -400,6 +519,7 @@ public class WorldManager : MonoBehaviour
         {
             lifetime -= 15; // we take 15 point to the lifetime
             endQuestion();
+            audioSource.PlayOneShot(wrongAnswer);
             other.transform.parent.gameObject.SetActive(false);
 
             BadTip();
