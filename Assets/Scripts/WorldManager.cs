@@ -570,7 +570,7 @@ public class WorldManager : MonoBehaviour
         }
         else if (other.gameObject.CompareTag("bad"))
         {
-            lifetime -= 150; // we take 15 point to the lifetime
+            lifetime -= 15; // we take 15 point to the lifetime
             endQuestion();
             audioSource.PlayOneShot(wrongAnswer);
             other.transform.parent.gameObject.SetActive(false);
