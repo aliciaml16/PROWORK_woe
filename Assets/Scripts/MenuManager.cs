@@ -75,7 +75,7 @@ public class MenuManager : MonoBehaviour
     {
         if(!helpOpen)
         {
-            if (message.Values[1].FloatValue < -0.2)
+            if (message.Values[1].FloatValue < -0.3)
             {
                 selectedOption += 1;
                 if (selectedOption > maxButton)
@@ -89,7 +89,7 @@ public class MenuManager : MonoBehaviour
 
 
             }
-            else if (message.Values[1].FloatValue > 0.2)
+            else if (message.Values[1].FloatValue > 0.3)
             {
                 selectedOption -= 1;
                 if (selectedOption < 0)
