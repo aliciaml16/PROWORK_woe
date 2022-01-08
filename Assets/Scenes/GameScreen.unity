@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.097064264, g: 0.16153315, b: 0.19369546, a: 1}
+  m_IndirectSpecularColor: {r: 0.097067066, g: 0.16153386, b: 0.19369793, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -5763,9 +5763,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 162faeb40a2668b4196c48c5ac81774f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {x: 0, y: 0, z: 0}
-  shouldMove: 0
-  moveSpeed: 30
+  moveSpeed: 50
 --- !u!135 &1619604926
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -5862,8 +5860,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 162faeb40a2668b4196c48c5ac81774f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {x: 0, y: 0, z: 0}
-  shouldMove: 0
   moveSpeed: 5
 --- !u!1 &1691270803
 GameObject:
@@ -7541,9 +7537,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0459e8908f09c4cb986f492675a6bbfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  oscPortNumber: 50000
-  oscDeviceUUID: EB
-  operatingSystem: android
+  oscPortNumber: 5000
+  oscDeviceUUID: spela-iphone
+  operatingSystem: ios
   speed: 10
   lifetimeBar: {fileID: 883086037}
   greenGradient:
@@ -7639,8 +7635,8 @@ MonoBehaviour:
   spawnPoint:
   - {fileID: 267284816}
   - {fileID: 1237472289}
-  timeBetweenQuestions: 3
-  numberOfQuestionsToGet: 5
+  timeBetweenQuestions: 4
+  numberOfQuestionsToGet: 10
   questionText: {fileID: 739062521}
   factTitle: {fileID: 735425903}
   factText: {fileID: 1202784755}
@@ -7707,7 +7703,7 @@ MonoBehaviour:
   wrongAnswer: {fileID: 8300000, guid: f3b723b5287d256409dcf24a0935b720, type: 3}
   winGame: {fileID: 8300000, guid: 873d4ae25cd0b4b4b913f58d25564551, type: 3}
   loseGame: {fileID: 8300000, guid: 3f7bcaa266f9cf74e8454efa96f94ea4, type: 3}
-  pollutionHit: {fileID: 8300000, guid: 522a5263ffb90004e93a0dc3a6b25007, type: 3}
+  pollutionHit: {fileID: 8300000, guid: b68443f213dc30e42acc8d4fab158846, type: 3}
   buttonScroll: {fileID: 8300000, guid: c15a21262acebce45a6a1c8d3e3f7b83, type: 3}
   buttonSelected: {fileID: 8300000, guid: bcca67b1f5c052949b797b88366d5df3, type: 3}
   buttonBack: {fileID: 8300000, guid: af1b1db0bab36b54a8bb8edba1dd99fb, type: 3}
@@ -7716,6 +7712,7 @@ MonoBehaviour:
   menuTip: {fileID: 837156230}
   tipLength: 4
   pollutant: {fileID: 1619604924}
+  spawnDelay: 1.5
 --- !u!54 &2024509148
 Rigidbody:
   m_ObjectHideFlags: 0

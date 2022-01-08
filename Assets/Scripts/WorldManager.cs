@@ -162,10 +162,7 @@ public class WorldManager : MonoBehaviour
     [Header("QM - Pollutants")]
     public GameObject pollutant;
     private bool isPossiblePollutant = false;
-    float x;
-    float y;
-    float z;
- Vector3 pos;
+    public float spawnDelay = 1f;
 
     private void Start()
     {
@@ -207,7 +204,7 @@ public class WorldManager : MonoBehaviour
         {
             tipsShown = true;
             // Uncomment next line to test the showing of the tipscreen
-            //PlayerPrefs.DeleteKey("tipScreen");
+            // PlayerPrefs.DeleteKey("tipScreen");
         }
         else
         {
@@ -388,12 +385,13 @@ public class WorldManager : MonoBehaviour
                 buttonsPause[selectedOption].GetComponent<Image>().color = new Color(0.6078432f, 0.654902f, 0.3333333f, 0.4f);
             }
         }
-        if (isPossiblePollutant == true && isPossibleQuestion == false)
+        if (isPossiblePollutant == true && isPossibleQuestion == false && timer > spawnDelay)
         {
-            x = Random.Range(-25, 10);
-            y = Random.Range(-5, 10);
-            z = Random.Range(50, 60);
-            pos = new Vector3(x, y, z);
+
+            float x = Random.Range(-25, 10);
+            float y = Random.Range(-5, 10);
+            float z = Random.Range(50, 60);
+            Vector3 pos = new Vector3(x, y, z);
             pollutant.transform.position = pos;
             isPossiblePollutant = false;
 
@@ -401,6 +399,8 @@ public class WorldManager : MonoBehaviour
 
             Pollusion pol = pollutant.GetComponent<Pollusion>();
             pol.SetTarget(this.transform.position);
+
+
         }
 
     }

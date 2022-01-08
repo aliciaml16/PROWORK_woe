@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Pollusion : MonoBehaviour
 {
-    public Vector3 target;
-    public bool shouldMove = false;
+    private Vector3 target;
+    private bool shouldMove = false;
     public float moveSpeed = 5f;
 
     // Update is called once per frame
