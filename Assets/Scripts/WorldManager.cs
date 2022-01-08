@@ -5,9 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using UnityEngine.SceneManagement;
-
-
-
+using Random=UnityEngine.Random;
 
 public class WorldManager : MonoBehaviour
 {
@@ -161,6 +159,14 @@ public class WorldManager : MonoBehaviour
     public float tipLength = 3.5f;
     private bool tipsShown = false;
 
+    [Header("QM - Pollutants")]
+    public GameObject pollutant;
+    private bool isPossiblePollutant = false;
+    float x;
+    float y;
+    float z;
+ Vector3 pos;
+
     private void Start()
     {
         // We connect the phone with the computer by creating a OSCReceiver
@@ -237,7 +243,7 @@ public class WorldManager : MonoBehaviour
         cloudsRenderer.material.SetColor("_Color", whiteGradient.Evaluate(lifetime / 100));
 
         // Timer working
-        if (timer > timeBetweenQuestions && isPossibleQuestion == false && tipsShown)
+        if (timer > timeBetweenQuestions && isPossibleQuestion == false && isPossiblePollutant == false && tipsShown)
         {
             isPossibleQuestion = true;
             newQuestion();
@@ -382,6 +388,20 @@ public class WorldManager : MonoBehaviour
                 buttonsPause[selectedOption].GetComponent<Image>().color = new Color(0.6078432f, 0.654902f, 0.3333333f, 0.4f);
             }
         }
+        if (isPossiblePollutant == true && isPossibleQuestion == false)
+        {
+            x = Random.Range(-25, 10);
+            y = Random.Range(-5, 10);
+            z = Random.Range(50, 60);
+            pos = new Vector3(x, y, z);
+            pollutant.transform.position = pos;
+            isPossiblePollutant = false;
+
+            pollutant.SetActive(true);
+
+            Pollusion pol = pollutant.GetComponent<Pollusion>();
+            pol.SetTarget(this.transform.position);
+        }
 
     }
 
@@ -453,6 +473,7 @@ public class WorldManager : MonoBehaviour
                 factUI.SetActive(false);
                 timer = 0.0f;
                 isPossibleQuestion = false;
+                isPossiblePollutant = true;
 
                 audioSource.PlayOneShot(buttonClose);
 
@@ -582,6 +603,20 @@ public class WorldManager : MonoBehaviour
 
             BadTip();
         }
+
+
+        if (other.gameObject.CompareTag("pollutant"))
+        {
+            audioSource.PlayOneShot(pollutionHit);
+            other.gameObject.SetActive(false);
+            lifetime -= 15; // we take 15 point to the lifetime
+            isPossiblePollutant = false;
+        }
+
+        else {
+            isPossiblePollutant = false;
+            other.gameObject.SetActive(false);
+        }
     }
 
     private void newQuestion()
@@ -704,4 +739,6 @@ public class WorldManager : MonoBehaviour
             quickTip.SetActive(false);
         }
     }
+
+    
 }

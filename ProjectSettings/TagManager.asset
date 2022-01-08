@@ -8,6 +8,7 @@ TagManager:
   - good
   - bad
   - player
+  - pollutant
   layers:
   - Default
   - TransparentFX
