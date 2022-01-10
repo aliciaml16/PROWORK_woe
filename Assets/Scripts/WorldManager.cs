@@ -60,14 +60,14 @@ public class WorldManager : MonoBehaviour
     public GameObject winScreen;
     public GameObject mediumScreen;
     private int correctpoint, wrongpoint;
-    int index;
+    public int index = 0;
 
     [Header("QM - Arrays")]
     public GameObject[] goodObjects;
     public GameObject[] badObjects;
     private List<string> questions = new List<string>() {
         "Choose between eating a steak or vegetables",
-        "Choose between eating a hamburger or a salad",
+        "Choose between eating a hamburger or fruit",
         "Choose between taking the car or your bike",
         "Choose between taking the car or going for a walk",
         "Choose between buying a plastic bottle or using a reusable one",
@@ -148,6 +148,9 @@ public class WorldManager : MonoBehaviour
     public AudioClip buttonSelected;
     public AudioClip buttonBack;
     public AudioClip buttonClose;
+    public AudioClip earthExplosion;
+    public AudioClip boxComing;
+    public AudioClip pollutionComing;
 
     private AudioSource audioSource;
     private bool isSoundPlayed = false;
@@ -163,6 +166,18 @@ public class WorldManager : MonoBehaviour
     public GameObject pollutant;
     private bool isPossiblePollutant = false;
     public float spawnDelay = 1f;
+
+    [Header("Explosion")]
+    public GameObject clouds;
+    private Rigidbody worldRB;
+    private ParticleSystem worldExplosion;
+    private MeshRenderer worldMesh;
+    private float endTime = 0;
+    private bool explosion = false;
+    private bool explosionSoundPlayed = false;
+
+    [Header("Box Disapear")]
+    public ParticleSystem boxDisapear;
 
     private void Start()
     {
@@ -204,7 +219,7 @@ public class WorldManager : MonoBehaviour
         {
             tipsShown = true;
             // Uncomment next line to test the showing of the tipscreen
-            // PlayerPrefs.DeleteKey("tipScreen");
+            //PlayerPrefs.DeleteKey("tipScreen");
         }
         else
         {
@@ -216,6 +231,10 @@ public class WorldManager : MonoBehaviour
         // get audio
 
         audioSource = GetComponent<AudioSource>();
+
+        worldExplosion = GetComponent<ParticleSystem>();
+        worldMesh = GetComponent<MeshRenderer>();
+        worldRB = GetComponent<Rigidbody>();
     }
 
     private void FixedUpdate()
@@ -225,7 +244,10 @@ public class WorldManager : MonoBehaviour
         rb.AddForce(movement * speed);
 
         // Rotation of the earth
-        transform.Rotate(new Vector3(0, 30, 0) * Time.deltaTime);
+        if (explosion == false)
+        {
+            transform.Rotate(new Vector3(0, 30, 0) * Time.deltaTime);
+        }
     }
 
     void Update()
@@ -325,8 +347,23 @@ public class WorldManager : MonoBehaviour
         }
         else if (factUI.activeInHierarchy == false && lifetime <= 0)
         {
-            gameOver = true;
-            gameOverScreen.SetActive(true);
+            endTime += Time.deltaTime;
+            explosion = true;
+            if (explosionSoundPlayed == false)
+            {
+                audioSource.PlayOneShot(earthExplosion);
+                explosionSoundPlayed = true;
+            }
+
+            if (endTime > 2)
+            {
+                gameOver = true;
+                gameOverScreen.SetActive(true);
+            }
+            worldRB.constraints = RigidbodyConstraints.FreezeAll;
+            worldExplosion.Play();
+            clouds.SetActive(false);
+            worldMesh.enabled = false;
 
             if (isSoundPlayed == false)
             {
@@ -387,7 +424,7 @@ public class WorldManager : MonoBehaviour
         }
         if (isPossiblePollutant == true && isPossibleQuestion == false && timer > spawnDelay)
         {
-
+            audioSource.PlayOneShot(pollutionComing);
             float x = Random.Range(-25, 10);
             float y = Random.Range(-5, 10);
             float z = Random.Range(50, 60);
@@ -399,8 +436,6 @@ public class WorldManager : MonoBehaviour
 
             Pollusion pol = pollutant.GetComponent<Pollusion>();
             pol.SetTarget(this.transform.position);
-
-
         }
 
     }
@@ -580,6 +615,7 @@ public class WorldManager : MonoBehaviour
             lifetime += 5; // we add 5 point to the lifetime
             endQuestion();
             audioSource.PlayOneShot(correctAnswer);
+            boxDisapear.Play();
             other.transform.parent.gameObject.SetActive(false);
             
             if (lifetime > 100)
@@ -593,6 +629,7 @@ public class WorldManager : MonoBehaviour
         {
             lifetime -= 15; // we take 15 point to the lifetime
             endQuestion();
+            boxDisapear.Play();
             audioSource.PlayOneShot(wrongAnswer);
             other.transform.parent.gameObject.SetActive(false);
 
@@ -609,7 +646,7 @@ public class WorldManager : MonoBehaviour
         {
             audioSource.PlayOneShot(pollutionHit);
             other.gameObject.SetActive(false);
-            lifetime -= 15; // we take 15 point to the lifetime
+            lifetime -= 5; // we take 5 point to the lifetime
             isPossiblePollutant = false;
         }
 
@@ -622,12 +659,13 @@ public class WorldManager : MonoBehaviour
     private void newQuestion()
     {
         // we choose a random index
-        index = UnityEngine.Random.Range(0, questions.Count);
+        //index = UnityEngine.Random.Range(0, questions.Count);
 
         // we choose the question with that index
         questionText.SetActive(true);
         questionText.GetComponent<Text>().text = questions[index].ToUpper();
         questions.RemoveAt(index); // we remove from the list so it doesn't appear again
+        audioSource.PlayOneShot(boxComing);
 
         GameObject correctAnswer = new GameObject();
         GameObject wrongAnswer = new GameObject();
