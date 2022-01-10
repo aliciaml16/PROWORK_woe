@@ -9,6 +9,8 @@ TagManager:
   - bad
   - player
   - pollutant
+  - leftCollision
+  - rightCollision
   layers:
   - Default
   - TransparentFX

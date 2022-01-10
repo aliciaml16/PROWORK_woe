@@ -60,7 +60,7 @@ public class WorldManager : MonoBehaviour
     public GameObject winScreen;
     public GameObject mediumScreen;
     private int correctpoint, wrongpoint;
-    public int index = 0;
+    int index;
 
     [Header("QM - Arrays")]
     public GameObject[] goodObjects;
@@ -177,7 +177,9 @@ public class WorldManager : MonoBehaviour
     private bool explosionSoundPlayed = false;
 
     [Header("Box Disapear")]
-    public ParticleSystem boxDisapear;
+    public ParticleSystem boxDisapear1;
+    public ParticleSystem boxDisapear2;
+    private bool collidingBox = false;
 
     private void Start()
     {
@@ -229,7 +231,6 @@ public class WorldManager : MonoBehaviour
         }
                
         // get audio
-
         audioSource = GetComponent<AudioSource>();
 
         worldExplosion = GetComponent<ParticleSystem>();
@@ -601,21 +602,28 @@ public class WorldManager : MonoBehaviour
         }
     }
 
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.CompareTag("rightCollision") && collidingBox == true)
+        {
+            boxDisapear2.Play();
+            collidingBox = false;
+        }
+        else if (other.gameObject.CompareTag("leftCollision") && collidingBox == true)
+        {
+            boxDisapear1.Play();
+            collidingBox = false;
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        // We detect if we collide with the box and we deactivate it
-        if (other.gameObject.CompareTag("box"))
-        {
-            other.gameObject.SetActive(false);
-        }
-
         // We detect if we collide with the good or bad element
         if (other.gameObject.CompareTag("good"))
         {
             lifetime += 5; // we add 5 point to the lifetime
             endQuestion();
             audioSource.PlayOneShot(correctAnswer);
-            boxDisapear.Play();
             other.transform.parent.gameObject.SetActive(false);
             
             if (lifetime > 100)
@@ -624,12 +632,12 @@ public class WorldManager : MonoBehaviour
             }
 
             GoodTip();
+            collidingBox = true;
         }
         else if (other.gameObject.CompareTag("bad"))
         {
             lifetime -= 15; // we take 15 point to the lifetime
             endQuestion();
-            boxDisapear.Play();
             audioSource.PlayOneShot(wrongAnswer);
             other.transform.parent.gameObject.SetActive(false);
 
@@ -639,8 +647,8 @@ public class WorldManager : MonoBehaviour
             }
 
             BadTip();
+            collidingBox = true;
         }
-
 
         if (other.gameObject.CompareTag("pollutant"))
         {
@@ -650,16 +658,16 @@ public class WorldManager : MonoBehaviour
             isPossiblePollutant = false;
         }
 
-        else {
-            isPossiblePollutant = false;
-            other.gameObject.SetActive(false);
-        }
+        //else {
+            //isPossiblePollutant = false;
+            //other.gameObject.SetActive(false);
+        //}
     }
 
     private void newQuestion()
     {
         // we choose a random index
-        //index = UnityEngine.Random.Range(0, questions.Count);
+        index = UnityEngine.Random.Range(0, questions.Count);
 
         // we choose the question with that index
         questionText.SetActive(true);
