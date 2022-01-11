@@ -221,7 +221,7 @@ public class WorldManager : MonoBehaviour
         {
             tipsShown = true;
             // Uncomment next line to test the showing of the tipscreen
-            //PlayerPrefs.DeleteKey("tipScreen");
+            // PlayerPrefs.DeleteKey("tipScreen");
         }
         else
         {
