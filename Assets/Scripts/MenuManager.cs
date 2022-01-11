@@ -8,9 +8,9 @@ public class MenuManager : MonoBehaviour
     // This is our game
 
     [Header("ZIG SIM settings")]
-    public int oscPortNumber = 3300; // port number
-    public string oscDeviceUUID = "aliciaphone"; // UUID
-    public string operatingSystem = "ios"; // type of operating system (iOs or Windows)
+    private int oscPortNumber; // port number
+    private string oscDeviceUUID; // UUID
+    private string operatingSystem; // type of operating system (iOs or Windows)
 
     [Header("Menu")]
     public GameObject helpMenu;
@@ -30,6 +30,11 @@ public class MenuManager : MonoBehaviour
 
     private void Start()
     {
+        // We get the values of ZIG SIM of the user
+        oscPortNumber = PlayerPrefs.GetInt("portNumber");
+        oscDeviceUUID = PlayerPrefs.GetString("UIID");
+        operatingSystem = PlayerPrefs.GetString("OS");
+
         // We connect the phone with the computer by creating a OSCReceiver
         // This will have the values we determinated in the editor (port, uuid and operating system)
         OSCReceiver receiver = gameObject.AddComponent<OSCReceiver>();
