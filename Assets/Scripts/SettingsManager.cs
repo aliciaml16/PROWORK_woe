@@ -72,6 +72,9 @@ public class SettingsManager : MonoBehaviour
         step4Screen.SetActive(false);
         alertBackground.SetActive(false);
         alertScreen.SetActive(false);
+
+        // We delete all the player settings
+        PlayerPrefs.DeleteAll();
     }
 
     // Functions that will change between screens
@@ -171,13 +174,13 @@ public class SettingsManager : MonoBehaviour
     public void OnMove(OSCMessage message)
     {
         // DOWN
-        if (message.Values[1].FloatValue < 0.4)
+        if (message.Values[1].FloatValue < -0.4)
         {
             topMiddle.sprite = moveGreen;
             bottomMiddle.sprite = moveWhite;
         }
         // UP
-        else if (message.Values[1].FloatValue > -0.4)
+        else if (message.Values[1].FloatValue > 0.4)
         {
             bottomMiddle.sprite = moveGreen;
             topMiddle.sprite = moveWhite;
