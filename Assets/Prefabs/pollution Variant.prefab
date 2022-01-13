@@ -4772,18 +4772,6 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
---- !u!114 &1133126290
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1668139989159385857}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0ffdfa0b8096943078e10f9ebfdf7e8f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &2010581988585842256
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4853,7 +4841,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 14b9215d657ca48349d9a6475497482a, type: 2}
     - target: {fileID: 919132149155446097, guid: d18adfffb875649e1a831ca3cdd08ad2, type: 3}
       propertyPath: m_Name
-      value: pollution
+      value: pollution Variant
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d18adfffb875649e1a831ca3cdd08ad2, type: 3}

@@ -162,8 +162,10 @@ public class WorldManager : MonoBehaviour
 
     [Header("QM - Pollutants")]
     public GameObject pollutant;
-    private bool isPossiblePollutant = false;
+    public ParticleSystem pollutionParticleSystem;
+    public GameObject pollutionRotationPS;
     public float spawnDelay = 1f;
+    private bool isPossiblePollutant = false;
 
     [Header("Explosion")]
     public GameObject clouds;
@@ -178,6 +180,12 @@ public class WorldManager : MonoBehaviour
     public ParticleSystem boxDisapear1;
     public ParticleSystem boxDisapear2;
     private bool collidingBox = false;
+
+
+    [Header("Exit Alert")]
+    public GameObject exitAlertScreen;
+    public Button exitAlertButtonYes;
+    public Button exitAlertButtonNo;
 
     private void Start()
     {
@@ -239,6 +247,10 @@ public class WorldManager : MonoBehaviour
         worldExplosion = GetComponent<ParticleSystem>();
         worldMesh = GetComponent<MeshRenderer>();
         worldRB = GetComponent<Rigidbody>();
+
+        exitAlertButtonYes.onClick.AddListener(QuitGame);
+        exitAlertButtonNo.onClick.AddListener(closeExitAlert);
+        exitAlertScreen.SetActive(false);
     }
 
     private void FixedUpdate()
@@ -256,6 +268,8 @@ public class WorldManager : MonoBehaviour
 
     void Update()
     {
+        pollutionRotationPS.transform.LookAt(pollutant.transform.position);
+
         // Changing size of the lifetime bar
         lifetimeBar.transform.localScale = new Vector3(lifetime * initialBarWidth / 100, 0.1561234f, 0);
 
@@ -437,6 +451,7 @@ public class WorldManager : MonoBehaviour
             isPossiblePollutant = false;
 
             pollutant.SetActive(true);
+            pollutant.gameObject.GetComponent<MeshRenderer>().enabled = true;
 
             Pollusion pol = pollutant.GetComponent<Pollusion>();
             pol.SetTarget(this.transform.position);
@@ -576,7 +591,7 @@ public class WorldManager : MonoBehaviour
                         break;
                     case 3:
                         // EXIT GAME
-                        Application.Quit();
+                        exitAlertScreen.SetActive(true);
                         break;
                 }
             }
@@ -598,11 +613,22 @@ public class WorldManager : MonoBehaviour
                         break;
                     case 2:
                         // EXIT GAME
-                        Application.Quit();
+                        exitAlertScreen.SetActive(true);
                         break;
                 }
             }
         }
+    }
+
+    private void closeExitAlert()
+    {
+        exitAlertScreen.SetActive(false);
+    }
+
+    public void QuitGame()
+    {
+        Debug.Log("QUIT!");
+        Application.Quit();
     }
 
     private void OnTriggerStay(Collider other)
@@ -659,6 +685,8 @@ public class WorldManager : MonoBehaviour
             other.gameObject.SetActive(false);
             lifetime -= 5; // we take 5 point to the lifetime
             isPossiblePollutant = false;
+
+            pollutionParticleSystem.Play();
         }
 
         //else {

@@ -1,29 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
+using extOSC;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using extOSC;
 
-public class SettingsManager : MonoBehaviour
+public class SettingsINGAME : MonoBehaviour
 {
     [Header("Buttons")]
-    public Button step1Next;
     public Button step2Back;
     public Button step2Next;
     public Button step3Back;
     public Button step3Next;
-    public Button step4Back;
-    public Button step4Next;
     public Button iosButton;
     public Button androidButton;
     private string operatingSystemInput = "ios";
 
     [Header("Screens")]
-    public GameObject step1Screen;
     public GameObject step2Screen;
     public GameObject step3Screen;
-    public GameObject step4Screen;
 
     [Header("Input Fields - Text")]
     public Text inputPort;
@@ -33,7 +28,6 @@ public class SettingsManager : MonoBehaviour
     public Button step2ok;
     public GameObject alertBackground;
     public GameObject alertScreen;
-    public Text textAlert;
 
     [Header("Sprites - Step 3")]
     public Image topLeft;
@@ -55,55 +49,36 @@ public class SettingsManager : MonoBehaviour
     void Start()
     {
         // We add listeners to each button
-        step1Next.onClick.AddListener(step1NextF);
         step2Back.onClick.AddListener(step2BackF);
         step2Next.onClick.AddListener(step2NextF);
         step3Back.onClick.AddListener(step3BackF);
         step3Next.onClick.AddListener(step3NextF);
-        step4Back.onClick.AddListener(step4BackF);
-        step4Next.onClick.AddListener(step4NextF);
         iosButton.onClick.AddListener(changeToIOS);
         androidButton.onClick.AddListener(changeToAndroid);
         step2ok.onClick.AddListener(closeAlert);
 
         // We hide all the screens but the step1 screen
-        step1Screen.SetActive(true);
-        step2Screen.SetActive(false);
+        step2Screen.SetActive(true);
         step3Screen.SetActive(false);
-        step4Screen.SetActive(false);
         alertBackground.SetActive(false);
         alertScreen.SetActive(false);
-
-        // We delete all the player settings
-        PlayerPrefs.DeleteAll();
     }
 
     // Functions that will change between screens
-    private void step1NextF()
-    {
-        step1Screen.SetActive(false);
-        step2Screen.SetActive(true);
-    }
 
     private void step2BackF()
     {
-        step1Screen.SetActive(true);
-        step2Screen.SetActive(false);
+        SceneManager.LoadScene("MainMenu");
     }
 
     private void step2NextF()
     {
         if (inputPort.text == "" || inputUIID.text == "")
         {
-            textAlert.text = "You need to fill all data.";
             alertBackground.SetActive(true);
             alertScreen.SetActive(true);
-        } else if (int.TryParse(inputPort.text, out int n) == false)
-        {
-            textAlert.text = "The port should be a number";
-            alertBackground.SetActive(true);
-            alertScreen.SetActive(true);
-        } else
+        }
+        else
         {
             PlayerPrefs.SetInt("portNumber", int.Parse(inputPort.text));
             PlayerPrefs.SetString("UIID", inputUIID.text);
@@ -148,18 +123,6 @@ public class SettingsManager : MonoBehaviour
 
     private void step3NextF()
     {
-        step3Screen.SetActive(false);
-        step4Screen.SetActive(true);
-    }
-
-    private void step4BackF()
-    {
-        step3Screen.SetActive(true);
-        step4Screen.SetActive(false);
-    }
-
-    private void step4NextF()
-    {
         SceneManager.LoadScene("MainMenu");
     }
 
@@ -192,7 +155,8 @@ public class SettingsManager : MonoBehaviour
             bottomMiddle.sprite = moveGreen;
             topMiddle.sprite = moveWhite;
         }
-        else {
+        else
+        {
             bottomMiddle.sprite = moveWhite;
             topMiddle.sprite = moveWhite;
         }
@@ -255,3 +219,4 @@ public class SettingsManager : MonoBehaviour
 
     }
 }
+

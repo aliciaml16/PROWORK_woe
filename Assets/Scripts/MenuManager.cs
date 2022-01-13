@@ -16,7 +16,7 @@ public class MenuManager : MonoBehaviour
     public GameObject helpMenu;
     public GameObject[] buttonsMenu;
     private int selectedOption = 0;
-    private int maxButton = 2;
+    private int maxButton = 3;
     private bool helpOpen = false;
 
     // audio
@@ -27,6 +27,12 @@ public class MenuManager : MonoBehaviour
     public AudioClip buttonBack;
 
     private AudioSource audioSource;
+
+
+    [Header("Exit Alert")]
+    public GameObject exitAlertScreen;
+    public Button exitAlertButtonYes;
+    public Button exitAlertButtonNo;
 
     private void Start()
     {
@@ -52,6 +58,11 @@ public class MenuManager : MonoBehaviour
         // get audio
 
         audioSource = GetComponent<AudioSource>();
+
+
+        exitAlertButtonYes.onClick.AddListener(QuitGame);
+        exitAlertButtonNo.onClick.AddListener(closeExitAlert);
+        exitAlertScreen.SetActive(false);
     }
 
     void Update()
@@ -146,7 +157,7 @@ public class MenuManager : MonoBehaviour
             {
                 case 0:
                     // RESUME
-                    SceneManager.LoadScene("GameScreen");
+                    PlayGame();
                     break;
                 case 1:
                     // HELP
@@ -154,8 +165,12 @@ public class MenuManager : MonoBehaviour
                     helpMenu.SetActive(true);
                     break;
                 case 2:
+                    // SETTINGS
+                    GoSettings();
+                    break;
+                case 3:
                     // MAIN MENU
-                    Application.Quit();
+                    exitAlertScreen.SetActive(true);
                     break;
             }
         }
@@ -170,5 +185,16 @@ public class MenuManager : MonoBehaviour
     {
         Debug.Log("QUIT!");
         Application.Quit();
+    }
+
+    private void closeExitAlert()
+    {
+        exitAlertScreen.SetActive(false);
+        Time.timeScale = 1;
+    }
+
+    public void GoSettings()
+    {
+        SceneManager.LoadScene("Settings-ingame");
     }
 }
