@@ -165,6 +165,8 @@ public class WorldManager : MonoBehaviour
     public ParticleSystem pollutionParticleSystem;
     public GameObject pollutionRotationPS;
     public float spawnDelay = 1f;
+    private float explosionPollutionTimer = 0;
+    private bool explosionWithPollution = false;
     private bool isPossiblePollutant = false;
 
     [Header("Explosion")]
@@ -180,7 +182,6 @@ public class WorldManager : MonoBehaviour
     public ParticleSystem boxDisapear1;
     public ParticleSystem boxDisapear2;
     private bool collidingBox = false;
-
 
     [Header("Exit Alert")]
     public GameObject exitAlertScreen;
@@ -268,7 +269,16 @@ public class WorldManager : MonoBehaviour
 
     void Update()
     {
-        pollutionRotationPS.transform.LookAt(pollutant.transform.position);
+        if (explosionWithPollution == false)
+        {
+            pollutionRotationPS.transform.LookAt(pollutant.transform.position);
+        }
+
+        if (explosionPollutionTimer > 1) {
+            explosionWithPollution = true;
+        }
+
+        explosionPollutionTimer += Time.deltaTime;
 
         // Changing size of the lifetime bar
         lifetimeBar.transform.localScale = new Vector3(lifetime * initialBarWidth / 100, 0.1561234f, 0);
@@ -681,12 +691,18 @@ public class WorldManager : MonoBehaviour
 
         if (other.gameObject.CompareTag("pollutant"))
         {
+            explosionWithPollution = true;
+            explosionPollutionTimer = 0;
             audioSource.PlayOneShot(pollutionHit);
             other.gameObject.SetActive(false);
             lifetime -= 5; // we take 5 point to the lifetime
             isPossiblePollutant = false;
 
-            pollutionParticleSystem.Play();
+            if (lifetime <= 5) {
+                pollutionRotationPS.SetActive(false);
+            } else {
+                pollutionParticleSystem.Play();
+            }
         }
 
         //else {
