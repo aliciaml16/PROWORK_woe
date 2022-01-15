@@ -19,7 +19,7 @@ public class ExitAlert : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKey(KeyCode.Escape))
+        if (Input.GetKeyDown (KeyCode.Escape))
         {
             exitAlertScreen.SetActive(true);
         }

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.097067066, g: 0.16153386, b: 0.19369793, a: 1}
+  m_IndirectSpecularColor: {r: 0.097064264, g: 0.16153315, b: 0.19369546, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -11144,7 +11144,6 @@ GameObject:
   - component: {fileID: 1544395432}
   - component: {fileID: 1544395431}
   - component: {fileID: 1544395430}
-  - component: {fileID: 1544395434}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -11243,21 +11242,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &1544395434
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1544395429}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a7fce82ebefc46b5ad4f4c5600ac289, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  exitAlertScreen: {fileID: 1648384025}
-  exitAlertButtonYes: {fileID: 2088563404}
-  exitAlertButtonNo: {fileID: 467067604}
 --- !u!1 &1553611211
 GameObject:
   m_ObjectHideFlags: 0
@@ -23238,6 +23222,7 @@ MonoBehaviour:
   exitAlertScreen: {fileID: 1648384025}
   exitAlertButtonYes: {fileID: 2088563404}
   exitAlertButtonNo: {fileID: 467067604}
+  menu: {fileID: 648594112}
 --- !u!54 &2024509148
 Rigidbody:
   m_ObjectHideFlags: 0

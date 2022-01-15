@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using System;
 using UnityEngine.SceneManagement;
 using Random=UnityEngine.Random;
+using UnityEngine.EventSystems;
 
 public class WorldManager : MonoBehaviour
 {
@@ -187,6 +188,8 @@ public class WorldManager : MonoBehaviour
     public GameObject exitAlertScreen;
     public Button exitAlertButtonYes;
     public Button exitAlertButtonNo;
+    public GameObject menu;
+    private bool exitAlertScreenIsOpen = false;
 
     private void Start()
     {
@@ -375,6 +378,7 @@ public class WorldManager : MonoBehaviour
         }
         else if (factUI.activeInHierarchy == false && lifetime <= 0)
         {
+            
             endTime += Time.deltaTime;
             explosion = true;
             if (explosionSoundPlayed == false)
@@ -389,7 +393,9 @@ public class WorldManager : MonoBehaviour
                 gameOverScreen.SetActive(true);
             }
             worldRB.constraints = RigidbodyConstraints.FreezeAll;
+            
             worldExplosion.Play();
+            pollutionRotationPS.SetActive(false);
             clouds.SetActive(false);
             worldMesh.enabled = false;
 
@@ -467,48 +473,59 @@ public class WorldManager : MonoBehaviour
             pol.SetTarget(this.transform.position);
         }
 
+        if (Input.GetKeyDown (KeyCode.Escape))
+        {
+            exitAlertScreen.SetActive(true);
+            exitAlertScreenIsOpen = true;
+            if(menu.active) {
+            } else {
+                Time.timeScale = 0;
+            }
+        }
     }
 
     public void OnMove(OSCMessage message)
     {
         // We get the values we receive from the phone and assign them to the movement
-        if (menuOpen == false && !gameOver) {
-            movementX = message.Values[0].FloatValue;
-            movementY = message.Values[1].FloatValue;
-        } else {
-            if (menuOpen == true)
-            { 
-                maxButton = 3;
-            }
-            else { 
-                maxButton = 2;
-            }
+        if (exitAlertScreenIsOpen == false) {
+            if (menuOpen == false && !gameOver) {
+                movementX = message.Values[0].FloatValue;
+                movementY = message.Values[1].FloatValue;
+            } else {
+                if (menuOpen == true)
+                { 
+                    maxButton = 3;
+                }
+                else { 
+                    maxButton = 2;
+                }
 
-            if (!helpOpen)
-            { 
+                if (!helpOpen)
+                { 
 
-                if (message.Values[1].FloatValue < -0.3) 
-                {
-                    selectedOption += 1;
-                    if (selectedOption > maxButton) {
-                        selectedOption = maxButton;
-                    }
-                    else
+                    if (message.Values[1].FloatValue < -0.3) 
                     {
-                        audioSource.PlayOneShot(buttonScroll);
-                    }
+                        selectedOption += 1;
+                        if (selectedOption > maxButton) {
+                            selectedOption = maxButton;
+                        }
+                        else
+                        {
+                            audioSource.PlayOneShot(buttonScroll);
+                        }
 
-                } 
-                else if (message.Values[1].FloatValue > 0.3)
-                {
-                    selectedOption -= 1;
-                    if (selectedOption < 0)
+                    } 
+                    else if (message.Values[1].FloatValue > 0.3)
                     {
-                        selectedOption = 0;
-                    }
-                    else
-                    {
-                        audioSource.PlayOneShot(buttonScroll);
+                        selectedOption -= 1;
+                        if (selectedOption < 0)
+                        {
+                            selectedOption = 0;
+                        }
+                        else
+                        {
+                            audioSource.PlayOneShot(buttonScroll);
+                        }
                     }
                 }
             }
@@ -567,12 +584,21 @@ public class WorldManager : MonoBehaviour
                 {
                     helpOpen = false;
                     helpMenu.SetActive(false);
+                } else if (exitAlertScreenIsOpen == true) {
+                    exitAlertScreen.SetActive(false);
+                    exitAlertScreenIsOpen = false;
                 }
                 else {
                     menuOpen = false;
                     pauseMenu.SetActive(false);
                     Time.timeScale = 1;
                 }
+            }
+            
+            if (exitAlertScreenIsOpen == true) {
+                exitAlertScreen.SetActive(false);
+                exitAlertScreenIsOpen = false;
+                Time.timeScale = 1;
             }
         }
 
@@ -602,6 +628,7 @@ public class WorldManager : MonoBehaviour
                     case 3:
                         // EXIT GAME
                         exitAlertScreen.SetActive(true);
+                        exitAlertScreenIsOpen = true;
                         break;
                 }
             }
@@ -624,6 +651,7 @@ public class WorldManager : MonoBehaviour
                     case 2:
                         // EXIT GAME
                         exitAlertScreen.SetActive(true);
+                        exitAlertScreenIsOpen = true;
                         break;
                 }
             }
@@ -633,6 +661,11 @@ public class WorldManager : MonoBehaviour
     private void closeExitAlert()
     {
         exitAlertScreen.SetActive(false);
+        exitAlertScreenIsOpen = false;
+        if(menu.active) {
+        } else {
+            Time.timeScale = 1;
+        }
     }
 
     public void QuitGame()

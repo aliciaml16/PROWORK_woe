@@ -33,6 +33,7 @@ public class MenuManager : MonoBehaviour
     public GameObject exitAlertScreen;
     public Button exitAlertButtonYes;
     public Button exitAlertButtonNo;
+    private bool exitAlertScreenIsOpen = false;
 
     private void Start()
     {
@@ -89,35 +90,37 @@ public class MenuManager : MonoBehaviour
 
     public void OnMove(OSCMessage message)
     {
-        if(!helpOpen)
-        {
-            if (message.Values[1].FloatValue < -0.3)
+        if (exitAlertScreenIsOpen == false) {
+            if(!helpOpen)
             {
-                selectedOption += 1;
-                if (selectedOption > maxButton)
+                if (message.Values[1].FloatValue < -0.3)
                 {
-                    selectedOption = maxButton;
-                }
-                else
-                {
-                    audioSource.PlayOneShot(buttonScroll);
-                }
+                    selectedOption += 1;
+                    if (selectedOption > maxButton)
+                    {
+                        selectedOption = maxButton;
+                    }
+                    else
+                    {
+                        audioSource.PlayOneShot(buttonScroll);
+                    }
 
 
-            }
-            else if (message.Values[1].FloatValue > 0.3)
-            {
-                selectedOption -= 1;
-                if (selectedOption < 0)
-                {
-                    selectedOption = 0;
                 }
-
-                else
+                else if (message.Values[1].FloatValue > 0.3)
                 {
-                    audioSource.PlayOneShot(buttonScroll);
-                }
+                    selectedOption -= 1;
+                    if (selectedOption < 0)
+                    {
+                        selectedOption = 0;
+                    }
 
+                    else
+                    {
+                        audioSource.PlayOneShot(buttonScroll);
+                    }
+
+                }
             }
         }
     }
@@ -146,6 +149,9 @@ public class MenuManager : MonoBehaviour
                     helpMenu.SetActive(false);
 
                     audioSource.PlayOneShot(buttonBack);
+                } else if (exitAlertScreenIsOpen == true) {
+                    exitAlertScreen.SetActive(false);
+                    exitAlertScreenIsOpen = false;
                 }
             }
         // Confirm
@@ -171,6 +177,7 @@ public class MenuManager : MonoBehaviour
                 case 3:
                     // MAIN MENU
                     exitAlertScreen.SetActive(true);
+                    exitAlertScreenIsOpen = true;
                     break;
             }
         }

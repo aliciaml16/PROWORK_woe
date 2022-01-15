@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using extOSC;
+using UnityEngine.EventSystems;
 
 public class SettingsManager : MonoBehaviour
 {
@@ -52,8 +53,14 @@ public class SettingsManager : MonoBehaviour
     private string oscDeviceUUID; // UUID
     private string operatingSystem; // type of operating system (iOs or Windows)
 
-    void Start()
+    [Header("InputFields")]
+    //public InputField portField;
+    //public InputField uuidField;
+    EventSystem system;
+
+    private void Start()
     {
+        system = EventSystem.current;
         // We add listeners to each button
         step1Next.onClick.AddListener(step1NextF);
         step2Back.onClick.AddListener(step2BackF);
@@ -76,6 +83,22 @@ public class SettingsManager : MonoBehaviour
 
         // We delete all the player settings
         PlayerPrefs.DeleteAll();
+    }
+
+    void Update() {
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            Selectable next = system.currentSelectedGameObject.GetComponent<Selectable>().FindSelectableOnDown();
+         
+            if (next != null)
+            {
+                InputField inputfield = next.GetComponent<InputField>();
+                if (inputfield != null) {
+                    inputfield.OnPointerClick(new PointerEventData(system));
+                }
+                system.SetSelectedGameObject(next.gameObject, new BaseEventData(system));
+            }
+        }
     }
 
     // Functions that will change between screens
@@ -176,6 +199,8 @@ public class SettingsManager : MonoBehaviour
         iosButton.GetComponent<Image>().color = new Color32(247, 239, 228, 51);
         operatingSystemInput = "other";
     }
+
+
 
     // ZIG SIM Working
     public void OnMove(OSCMessage message)
